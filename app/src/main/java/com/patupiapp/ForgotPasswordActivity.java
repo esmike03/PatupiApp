@@ -1,4 +1,4 @@
-package com.travelcompanion;
+package com.patupiapp;
 
 import android.content.Intent;
 import android.os.Bundle;

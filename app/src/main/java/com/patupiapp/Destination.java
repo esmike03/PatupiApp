@@ -1,9 +1,4 @@
-package com.travelcompanion;
-
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-
-import java.net.URL;
+package com.patupiapp;
 
 public class Destination {
 

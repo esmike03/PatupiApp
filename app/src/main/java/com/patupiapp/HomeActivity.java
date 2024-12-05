@@ -1,4 +1,4 @@
-package com.travelcompanion;
+package com.patupiapp;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -85,7 +85,7 @@ public class HomeActivity extends AppCompatActivity {
             if(itemId == R.id.NavHome){
                 loadFragment(new HomeFragment(), false);
             } else if (itemId == R.id.NavMap) {
-                loadFragment(new MapFragment(), false);
+//                loadFragment(new MapFragment(), false);
             } else if (itemId == R.id.NavOptions) {
                 loadFragment(new OptionsFragment(), false);
             }

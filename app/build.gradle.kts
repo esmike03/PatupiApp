@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.travelcompanion"
+    namespace = "com.patupiapp"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.travelcompanion"
+        applicationId = "com.patupiapp"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

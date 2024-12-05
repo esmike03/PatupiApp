@@ -12,8 +12,8 @@
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#2979FF"
         android:padding="10dp"
-        android:background="#00E676"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/googlesans_bold"
-            android:text="Tourist Hotspot"
+            android:text="Barbershop"
             android:textColor="@color/white"
             android:textSize="28sp"
             app:layout_constraintStart_toStartOf="parent"

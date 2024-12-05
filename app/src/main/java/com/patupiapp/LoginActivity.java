@@ -1,7 +1,6 @@
-package com.travelcompanion;
+package com.patupiapp;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -36,7 +35,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -47,16 +45,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.FirebaseDatabase;
 
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.overlay.Marker;
-
 import java.util.HashMap;
-import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
 
     EditText edemail, edpass;
-    Button buttonLogin;
+    Button buttonLogin, buttonbusiness;
     TextView buttonText1, forgot;
     ImageButton googleAuth;
     FirebaseAuth auth;
@@ -85,6 +79,7 @@ public class LoginActivity extends AppCompatActivity {
         edemail = findViewById(R.id.emaillogin);
         edpass = findViewById(R.id.inputpassword);
         buttonLogin = findViewById(R.id.button);
+        buttonbusiness = findViewById(R.id.button2);
 
         forgot = findViewById(R.id.forgot);
         forgot.setOnClickListener(new View.OnClickListener() {
@@ -180,6 +175,11 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        buttonbusiness.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, BusinessActivity.class);
+            startActivity(intent);
+        });
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -260,7 +260,7 @@ public class LoginActivity extends AppCompatActivity {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuth(account.getIdToken());
             } catch (Exception e) {
-                Toast.makeText(this, "Something went wrong. Please try again later.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Error:" + e, Toast.LENGTH_SHORT).show();
                 progressDialog.dismiss();
             }
         }

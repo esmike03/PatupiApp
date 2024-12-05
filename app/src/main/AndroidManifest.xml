@@ -34,7 +34,13 @@
             android:name=".RegisterActivity"
             android:exported="false" />
         <activity
+            android:name=".BusinessActivity"
+            android:exported="false" />
+        <activity
             android:name=".LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LoginBusinessActivity"
             android:exported="false" />
 
         <meta-data

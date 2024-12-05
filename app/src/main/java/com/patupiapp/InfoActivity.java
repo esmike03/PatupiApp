@@ -1,4 +1,4 @@
-package com.travelcompanion;
+package com.patupiapp;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,8 +16,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 public class InfoActivity extends AppCompatActivity {
 

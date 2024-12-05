@@ -8,8 +8,8 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.travelcompanion" />
-                  <option name="mobileSdkAppId" value="1:1034174467493:android:7747a4c375677905956c4c" />
+                  <option name="appId" value="com.patupiapp" />
+                  <option name="mobileSdkAppId" value="1:1034174467493:android:7f32999ece3c41c6956c4c" />
                   <option name="projectId" value="travel-companion-72c59" />
                   <option name="projectNumber" value="1034174467493" />
                 </ConnectionSetting>

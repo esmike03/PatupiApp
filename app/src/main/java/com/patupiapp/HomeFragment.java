@@ -1,15 +1,12 @@
-package com.travelcompanion;
+package com.patupiapp;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -40,8 +37,8 @@ public class HomeFragment extends Fragment {
         recyclerView2 = rootView.findViewById(R.id.hotellist);
         recyclerView = rootView.findViewById(R.id.distanationList);
 
-        database2 = FirebaseDatabase.getInstance().getReference("hotels");
-        database = FirebaseDatabase.getInstance().getReference("destination");
+        database2 = FirebaseDatabase.getInstance().getReference("barbershop");
+        database = FirebaseDatabase.getInstance().getReference("barbershop");
 
         recyclerView2.setHasFixedSize(true);
         recyclerView2.setLayoutManager(new LinearLayoutManager(getContext()));

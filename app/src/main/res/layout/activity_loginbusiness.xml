@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    tools:context=".LoginBusinessActivity">
 
     <ImageView
         android:id="@+id/imageView3"
@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
         android:fontFamily="@font/googlesans_medium"
-        android:text="@string/log_in"
+        android:text="Business Login"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="#3C3C3C"
         android:textSize="34sp"
@@ -124,7 +124,7 @@
         android:backgroundTint="#565656"
         android:fontFamily="@font/googlesans_medium"
         android:hapticFeedbackEnabled="true"
-        android:text="Patupi Business"
+        android:text="Create Business Account"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
@@ -139,6 +139,7 @@
         android:fontFamily="@font/googlesans"
         android:text="@string/or_sign_in_with"
         android:textColor="#616161"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
@@ -151,24 +152,12 @@
         android:layout_marginBottom="65dp"
         android:fontFamily="@font/googlesans"
         android:text="@string/don_t_have_any_account_sign_up"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
 
-    <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="32dp"
-        android:background="#00FFFFFF"
-        android:contentDescription="@string/google"
-        android:scaleType="centerInside"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/google" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

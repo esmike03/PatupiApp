@@ -9,7 +9,7 @@
 
     <ImageView
         android:id="@+id/imageView3"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_marginTop="75dp"
         android:contentDescription="@string/logoname"
@@ -19,7 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.284"
-        app:srcCompat="@drawable/logonb" />
+        app:srcCompat="@drawable/travelman2" />
 
     <TextView
         android:id="@+id/textView3"
@@ -137,7 +137,7 @@
         android:layout_width="300dp"
         android:layout_height="55dp"
         android:layout_marginTop="32dp"
-        android:backgroundTint="#19BF96"
+        android:backgroundTint="#2979FF"
         android:enabled="true"
         android:fontFamily="@font/googlesans_medium"
         android:text="@string/create"

@@ -1,4 +1,4 @@
-package com.travelcompanion;
+package com.patupiapp;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -8,7 +8,6 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,7 +31,6 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -119,7 +117,7 @@ public class RegisterActivity extends AppCompatActivity {
                             String uid = firebaseuser.getUid();  // Get the unique user ID
                             String noProfile = "https://lh3.googleusercontent.com/a/ACg8ocLln85GhQZEb7H-sa5L7OGVM5ITI7mL_Lxh38-e4HIA8sTKFBD7=s96-c";
 
-                            User user = new User(email, uid, userName, noProfile);
+                            User user = new User(email, uid, userName, noProfile, "");
                             reference.child(uid).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {

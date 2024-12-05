@@ -4,9 +4,9 @@
     <item android:title="Home"
           android:id="@+id/NavHome"
           android:icon="@drawable/baseline_home"/>
-    <item android:title="Map"
+    <item android:title="Patupi App"
           android:id="@+id/NavMap"
-          android:icon="@drawable/baseline_map"/>
+          android:icon="@drawable/baseline_content_cut_24"/>
     <item android:title="Options"
           android:id="@+id/NavOptions"
           android:icon="@drawable/baseline_settings"/>

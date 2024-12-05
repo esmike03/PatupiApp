@@ -14,6 +14,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Travel Companion"
+rootProject.name = "Patupi App"
 include(":app")
  

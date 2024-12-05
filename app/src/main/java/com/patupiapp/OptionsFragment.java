@@ -1,4 +1,4 @@
-package com.travelcompanion;
+package com.patupiapp;
 
 import static android.content.Context.MODE_PRIVATE;
 

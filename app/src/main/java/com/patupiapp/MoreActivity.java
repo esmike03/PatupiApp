@@ -1,4 +1,4 @@
-package com.travelcompanion;
+package com.patupiapp;
 
 import android.content.Context;
 import android.content.Intent;
@@ -42,7 +42,7 @@ public class MoreActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_more);
 
-        database = FirebaseDatabase.getInstance().getReference("destination");
+        database = FirebaseDatabase.getInstance().getReference("barbershop");
 
         searchView = findViewById(R.id.search);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

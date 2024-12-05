@@ -3,83 +3,87 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:gravity="center"
-    android:background="#F3EDF7"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F3EDF7"
     tools:context=".HomeActivity">
-    <LinearLayout
+
+    <!-- Header Section -->
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:orientation="horizontal">
+        android:backgroundTint="#00E676"
+        android:padding="8dp">
 
+        <!-- Profile Picture -->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profilePic"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/img"
+            android:contentDescription="Profile Picture"
+            android:layout_marginEnd="12dp" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:backgroundTint="#00E676">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profilePic"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="24dp"
-                android:contentDescription="profile"
-                android:src="@drawable/img"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        <!-- Name and Place -->
+        <LinearLayout
+            android:id="@+id/namePlaceContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_toEndOf="@id/profilePic"
+            android:layout_centerVertical="true">
 
             <TextView
                 android:id="@+id/profileName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp"
-                android:fontFamily="@font/googlesans_medium"
                 android:text="Name"
-                android:textColor="#191919"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/profilePic"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:textColor="#191919"
+                android:fontFamily="@font/googlesans_medium" />
 
             <TextView
                 android:id="@+id/place"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
-                android:layout_marginBottom="12dp"
-                android:drawablePadding="2dp"
-                android:fontFamily="@font/googlesans"
-                android:gravity="bottom"
                 android:text="Place"
+                android:textSize="12sp"
                 android:textColor="#535353"
-                android:textSize="10sp"
-                app:drawableEndCompat="@drawable/pin_custom"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/profilePic"
-                app:layout_constraintTop_toBottomOf="@+id/profileName" />
+                android:drawablePadding="4dp"
+                android:fontFamily="@font/googlesans"
+                android:drawableStart="@drawable/pin_custom" />
+        </LinearLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Top Right Image -->
+        <ImageView
+            android:id="@+id/topRightImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
 
-    </LinearLayout>
+            android:contentDescription="Top Right Icon"
+            android:src="@drawable/travelman2" />
+    </RelativeLayout>
 
+    <!-- Content Section -->
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#FFFFFF" />
 
+    <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
-        android:layout_height="73dp"
+        android:layout_height="70dp"
+        android:background="#FFFFFF"
         app:menu="@menu/bottom_nav_menu"
-        app:itemPaddingBottom="13dp"/>
-
-
-
+        app:itemIconTint="#535353"
+        app:itemTextColor="#535353" />
 </LinearLayout>
