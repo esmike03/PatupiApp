@@ -15,4 +15,7 @@ public class User {
         this.business = business;
     }
 
+    public String getUserName() {
+        return name;
+    }
 }

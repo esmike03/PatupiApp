@@ -6,12 +6,14 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import org.osmdroid.config.Configuration;
 import org.osmdroid.util.GeoPoint;
@@ -65,6 +67,34 @@ public class MapFragment extends Fragment {
         // Enable zoom controls (optional)
         mapView.setBuiltInZoomControls(true);
 
+// Set the OnTouchListener for pinpointing
+        mapView.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                // Get latitude and longitude of the pinpointed location
+                GeoPoint touchPoint = (GeoPoint) mapView.getProjection().fromPixels((int) event.getX(), (int) event.getY());
+                double latitude = touchPoint.getLatitude();
+                double longitude = touchPoint.getLongitude();
+
+                // Pass the coordinates to BusinessFragment
+                passCoordinatesToBusinessFragment(latitude, longitude);
+
+                // Optionally, show a marker on the map
+                Marker marker = new Marker(mapView);
+                marker.setPosition(touchPoint);
+                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
+
+                // Clear previous markers and add the new one
+                mapView.getOverlays().clear();
+                mapView.getOverlays().add(marker);
+                mapView.invalidate(); // Refresh the map
+
+                // Call performClick to ensure accessibility services detect the click
+                v.performClick();
+            }
+            return true; // Returning true to indicate the event was handled
+        });
+
+
         return rootView;
     }
 
@@ -110,5 +140,23 @@ public class MapFragment extends Fragment {
                 }
             });
         }
+    }
+
+    // Method to pass coordinates to LocationDetailsFragment and load the fragment
+    private void passCoordinatesToBusinessFragment(double latitude, double longitude) {
+        // Create a Bundle to pass data to the next fragment
+        Bundle bundle = new Bundle();
+        bundle.putDouble("latitude", latitude);
+        bundle.putDouble("longitude", longitude);
+
+        // Create a new BusinessFragment and set the arguments
+        BusinessFragment businessFragment = new BusinessFragment();
+        businessFragment.setArguments(bundle);
+
+        // Load the BusinessFragment
+        getFragmentManager().beginTransaction()
+                .replace(R.id.frameLayout, businessFragment)
+                .addToBackStack(null) // Add to the back stack so the user can go back
+                .commit();
     }
 }

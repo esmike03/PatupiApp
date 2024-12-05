@@ -43,7 +43,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 
@@ -121,7 +125,7 @@ public class LoginBusinessActivity extends AppCompatActivity {
                 email = edemail.getText().toString();
                 password = edpass.getText().toString();
                 progressDialog.setTitle("Log In");
-                progressDialog.setMessage("please wait...");
+                progressDialog.setMessage("Please wait...");
                 progressDialog.setCanceledOnTouchOutside(true);
                 progressDialog.show();
 
@@ -131,35 +135,63 @@ public class LoginBusinessActivity extends AppCompatActivity {
                 } else if (TextUtils.isEmpty(password)) {
                     Toast.makeText(LoginBusinessActivity.this, "Password is required!", Toast.LENGTH_SHORT).show();
                     progressDialog.dismiss();
-                } else{
+                } else {
                     auth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
-                                        // Sign in success, update UI with the signed-in user's information
-                                        Toast.makeText(LoginBusinessActivity.this, "Sign In Successfully!",
-                                                Toast.LENGTH_SHORT).show();
-                                        progressDialog.dismiss();
-                                        saveLoginStatus(true);
-                                        Intent intent = new Intent(LoginBusinessActivity.this, HomeActivity.class);
-                                        startActivity(intent);
-                                        finish();
+                                        // Check if the "business" field is empty in the database
+                                        String userId = auth.getCurrentUser().getUid();
+                                        DatabaseReference userRef = FirebaseDatabase.getInstance()
+                                                .getReference("users")
+                                                .child(userId);
+
+                                        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                if (snapshot.exists()) {
+                                                    String business = snapshot.child("business").getValue(String.class);
+                                                    if (TextUtils.isEmpty(business)) {
+                                                        // Business field is empty
+                                                        Toast.makeText(LoginBusinessActivity.this, "Not a Business Account!", Toast.LENGTH_SHORT).show();
+                                                        progressDialog.dismiss();
+                                                        auth.signOut(); // Log out the user if the field is empty
+                                                    } else {
+                                                        // Proceed to next activity
+                                                        Toast.makeText(LoginBusinessActivity.this, "Sign In Successfully!",
+                                                                Toast.LENGTH_SHORT).show();
+                                                        progressDialog.dismiss();
+                                                        saveLoginStatus(true);
+                                                        Intent intent = new Intent(LoginBusinessActivity.this, BusinessHomeActivity.class);
+                                                        startActivity(intent);
+                                                        finish();
+                                                    }
+                                                } else {
+                                                    // User data not found in the database
+                                                    Toast.makeText(LoginBusinessActivity.this, "User data not found.", Toast.LENGTH_SHORT).show();
+                                                    progressDialog.dismiss();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+                                                Toast.makeText(LoginBusinessActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                                                progressDialog.dismiss();
+                                            }
+                                        });
                                     } else {
-                                        // If sign in fails, display a message to the user.
-                                        Toast.makeText(LoginBusinessActivity.this, "Authentication failed.",
-                                                Toast.LENGTH_SHORT).show();
+                                        // Authentication failed
+                                        Toast.makeText(LoginBusinessActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                                         progressDialog.dismiss();
                                         saveLoginStatus(false);
-
-
                                     }
                                 }
                             });
                 }
-
             }
         });
+
 
 
         String text =  "Don't have any account? Sign Up";

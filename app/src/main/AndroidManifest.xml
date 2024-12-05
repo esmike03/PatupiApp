@@ -37,6 +37,9 @@
             android:name=".BusinessActivity"
             android:exported="false" />
         <activity
+            android:name=".BusinessHomeActivity"
+            android:exported="false" />
+        <activity
             android:name=".LoginActivity"
             android:exported="false" />
         <activity
