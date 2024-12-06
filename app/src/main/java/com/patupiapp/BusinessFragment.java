@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,11 +28,22 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.FirebaseStorage;
 
+
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class BusinessFragment extends Fragment {
 
@@ -131,23 +143,100 @@ public class BusinessFragment extends Fragment {
             String latitudeStr = blatitude.getText().toString().trim();
             String longitudeStr = blongitude.getText().toString().trim();
 
-
             // Check if fields are not empty
-            if (!place.isEmpty() && !info.isEmpty() && !latitudeStr.isEmpty() && !longitudeStr.isEmpty()) {
-                double lattitude = Double.parseDouble(latitudeStr);
-                double longitude = Double.parseDouble(longitudeStr);
+            if (!place.isEmpty() && !info.isEmpty() && !latitudeStr.isEmpty() && !longitudeStr.isEmpty() && background != null) {
+                try {
+                    // Convert the image to a Base64-encoded string
+                    InputStream inputStream = requireContext().getContentResolver().openInputStream(background);
+                    byte[] imageBytes = new byte[inputStream.available()];
+                    inputStream.read(imageBytes);
+                    String base64Image = Base64.encodeToString(imageBytes, Base64.NO_WRAP);
 
-                String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-                // Create a new Barbershop object with the provided data
-                Barbershop barbershop = new Barbershop(place, info, lattitude, longitude, background.toString(), userEmail);
+                    // Prepare data for GitHub API
+                    String fileName = UUID.randomUUID().toString() + ".jpg"; // Generate a unique file name
+                    String repoOwner = "esmike03"; // Replace with your GitHub username
+                    String repoName = "patupi-storage"; // Replace with your GitHub repository name
+                    String branch = "main"; // Replace with the branch where you want to upload
+                    String accessToken = "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"; // Replace with your PAT
 
-                // Push the Barbershop data to Firebase
-                String id = database.push().getKey(); // Generate a unique ID for the new entry
-                if (id != null) {
-                    database.child(id).setValue(barbershop); // Upload data to Firebase
+                    // GitHub API URL
+                    String url = "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contents/" + fileName;
+
+                    // Create the JSON payload
+                    JSONObject jsonBody = new JSONObject();
+                    jsonBody.put("message", "Add image: " + fileName);
+                    jsonBody.put("content", base64Image);
+                    jsonBody.put("branch", branch);
+
+                    // Make the HTTP request to upload the image
+                    new Thread(() -> {
+                        try {
+                            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+                            connection.setRequestMethod("PUT");
+                            connection.setRequestProperty("Authorization", "token " + accessToken);
+                            connection.setRequestProperty("Content-Type", "application/json");
+                            connection.setDoOutput(true);
+
+                            OutputStream os = connection.getOutputStream();
+                            os.write(jsonBody.toString().getBytes());
+                            os.close();
+
+                            int responseCode = connection.getResponseCode();
+                            if (responseCode == 201) {
+                                // Parse the response to get the image URL
+                                InputStream responseStream = connection.getInputStream();
+                                BufferedReader reader = new BufferedReader(new InputStreamReader(responseStream));
+                                StringBuilder responseBuilder = new StringBuilder();
+                                String line;
+                                while ((line = reader.readLine()) != null) {
+                                    responseBuilder.append(line);
+                                }
+                                reader.close();
+                                JSONObject responseJson = new JSONObject(responseBuilder.toString());
+                                String imageUrl = responseJson.getJSONObject("content").getString("download_url");
+
+                                // Continue with saving other data
+                                double latitude = Double.parseDouble(latitudeStr);
+                                double longitude = Double.parseDouble(longitudeStr);
+
+                                String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                                Barbershop barbershop = new Barbershop(place, info, latitude, longitude, imageUrl, userEmail);
+
+                                // Push the Barbershop data to Firebase Database
+                                String id = database.push().getKey(); // Generate a unique ID for the new entry
+                                if (id != null) {
+                                    database.child(id).setValue(barbershop)
+                                            .addOnSuccessListener(aVoid -> {
+                                                requireActivity().runOnUiThread(() ->
+                                                        Toast.makeText(requireContext(), "Barbershop added successfully!", Toast.LENGTH_SHORT).show()
+                                                );
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                requireActivity().runOnUiThread(() ->
+                                                        Toast.makeText(requireContext(), "Failed to add barbershop: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                                                );
+                                            });
+                                }
+                            } else {
+                                requireActivity().runOnUiThread(() ->
+                                        Toast.makeText(requireContext(), "Failed to upload image to GitHub", Toast.LENGTH_SHORT).show()
+                                );
+                            }
+                        } catch (Exception e) {
+                            requireActivity().runOnUiThread(() ->
+                                    Toast.makeText(requireContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                            );
+                        }
+                    }).start();
+                } catch (Exception e) {
+                    Toast.makeText(requireContext(), "Error processing image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
+            } else {
+                Toast.makeText(requireContext(), "Please fill all fields and select an image.", Toast.LENGTH_SHORT).show();
             }
         });
+
+
 
         imageView.setOnClickListener(v -> openImagePicker());
         if (getArguments() != null) {

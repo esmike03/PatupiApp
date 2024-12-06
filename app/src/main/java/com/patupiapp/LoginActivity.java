@@ -176,7 +176,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         buttonbusiness.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, BusinessActivity.class);
+            Intent intent = new Intent(LoginActivity.this, LoginBusinessActivity.class);
             startActivity(intent);
         });
 
