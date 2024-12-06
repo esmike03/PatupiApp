@@ -3,6 +3,7 @@ package com.patupiapp;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,6 +14,11 @@ import java.util.List;
 public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingViewHolder> {
 
     private List<Booking> bookingList;
+
+
+
+    // Define an interface for the click listener
+
 
     public BookingAdapter(List<Booking> bookingList) {
         this.bookingList = bookingList;

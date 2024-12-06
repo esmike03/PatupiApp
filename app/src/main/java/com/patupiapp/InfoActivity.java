@@ -33,17 +33,24 @@ public class InfoActivity extends AppCompatActivity {
 
     private Button back, locate;
     private ImageView placeimg;
-    private TextView latitude, longitude, place, info;
+    private TextView latitude, longitude, place, info, cancel;
     private Button booknow;
+    EditText editTextDate;
+
+    private DatabaseReference bookingsRef;
+    private ValueEventListener bookingListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_info);
 
-        booknow = findViewById(R.id.button5);
+        cancel = findViewById(R.id.textView17);
 
-        EditText editTextDate = findViewById(R.id.editTextDate);
+        booknow = findViewById(R.id.button5);
+        bookingsRef = FirebaseDatabase.getInstance().getReference("Bookings");
+
+        editTextDate = findViewById(R.id.editTextDate);
         editTextDate.requestFocus();
         editTextDate.setOnClickListener(view -> {
 
@@ -107,6 +114,49 @@ public class InfoActivity extends AppCompatActivity {
         String getinfo = intent.getStringExtra("info");
         String placeEmail = intent.getStringExtra("placeEmail"); // Pass the email in intent
         String userEmail = intent.getStringExtra("userEmail");
+        // Get the logged-in user's email
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String loggedInUserEmail = auth.getCurrentUser() != null ? auth.getCurrentUser().getEmail() : null;
+        String loggedInUserName = auth.getCurrentUser() != null ? auth.getCurrentUser().getDisplayName() : null;
+        // Cancel button listener to delete booking
+        cancel.setOnClickListener(view -> {
+            if (loggedInUserEmail == null) {
+                Toast.makeText(InfoActivity.this, "User is not logged in!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Query bookings to find the current booking for the user and place
+            bookingsRef.orderByChild("userEmail").equalTo(loggedInUserEmail)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot bookingSnapshot : dataSnapshot.getChildren()) {
+                                String bookedPlace = bookingSnapshot.child("placeName").getValue(String.class);
+                                String bookedDate = bookingSnapshot.child("date").getValue(String.class);
+
+                                // If the booking matches the current place and date, delete it
+                                if (bookedPlace != null && bookedPlace.equals(getplace)) {
+                                    String bookingId = bookingSnapshot.getKey(); // Get the booking ID
+                                    bookingsRef.child(bookingId).removeValue().addOnCompleteListener(task -> {
+                                        if (task.isSuccessful()) {
+                                            editTextDate.setText(""); // Clear the date field
+                                            booknow.setEnabled(true); // Re-enable booking button
+                                            Toast.makeText(InfoActivity.this, "Booking Cancelled.", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(InfoActivity.this, "Failed to cancel booking.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                    break;
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Toast.makeText(InfoActivity.this, "Error checking bookings: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        });
 
         booknow.setOnClickListener(view -> {
             String selectedDate = editTextDate.getText().toString();
@@ -117,19 +167,19 @@ public class InfoActivity extends AppCompatActivity {
                 return;
             }
 
-            // Get the logged-in user's email
-            FirebaseAuth auth = FirebaseAuth.getInstance();
-            String loggedInUserEmail = auth.getCurrentUser() != null ? auth.getCurrentUser().getEmail() : null;
-            String loggedInUserName = auth.getCurrentUser() != null ? auth.getCurrentUser().getDisplayName() : null;
+
 
             if (loggedInUserEmail == null) {
                 // Handle case where user is not logged in
                 Toast.makeText(InfoActivity.this, "User is not logged in!", Toast.LENGTH_SHORT).show();
                 return;
             }
+            // Check if the user already has a booking for this place
+            DatabaseReference bookingsRef = FirebaseDatabase.getInstance().getReference("Bookings");
+
 
             // Check if the user has already booked for this date
-            DatabaseReference bookingsRef = FirebaseDatabase.getInstance().getReference("Bookings");
+//            DatabaseReference bookingsRef = FirebaseDatabase.getInstance().getReference("Bookings");
             bookingsRef.orderByChild("userEmail").equalTo(loggedInUserEmail)
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -148,7 +198,7 @@ public class InfoActivity extends AppCompatActivity {
 
                             if (alreadyBooked) {
                                 // Disable the button if already booked
-                                booknow.setEnabled(false);
+                                booknow.setEnabled(true);
                                 Toast.makeText(InfoActivity.this, "You have already booked for this date.", Toast.LENGTH_SHORT).show();
                             } else {
                                 // Proceed with booking
@@ -168,6 +218,7 @@ public class InfoActivity extends AppCompatActivity {
                                         // Booking successful
                                         booknow.setEnabled(false);
                                         editTextDate.setText(""); // Clear the date field
+                                        attachBookingListener(loggedInUserEmail, getplace);
                                         Toast.makeText(InfoActivity.this, "Booking Successful!", Toast.LENGTH_SHORT).show();
                                     } else {
                                         // Handle errors
@@ -186,7 +237,7 @@ public class InfoActivity extends AppCompatActivity {
         });
 
 
-
+        attachBookingListener(loggedInUserEmail, getplace);
         back = findViewById(R.id.backbtn);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,13 +245,60 @@ public class InfoActivity extends AppCompatActivity {
                 finish();
             }
         });
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Detach listener to prevent memory leaks
+        if (bookingListener != null) {
+            bookingsRef.removeEventListener(bookingListener);
+        }
     }
 
+    private void attachBookingListener(String loggedInUserEmail, String getplace) {
+        bookingListener = bookingsRef.orderByChild("userEmail").equalTo(loggedInUserEmail)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        boolean alreadyBooked = false;
+
+                        for (DataSnapshot bookingSnapshot : dataSnapshot.getChildren()) {
+                            String bookedPlace = bookingSnapshot.child("placeName").getValue(String.class);
+                            String bookedDate = bookingSnapshot.child("date").getValue(String.class);
+
+                            if (bookedPlace != null && bookedPlace.equals(getplace)) {
+                                // User already booked this place
+                                editTextDate.setText(bookedDate); // Display the booked date
+                                editTextDate.setEnabled(false); // Disable date selection
+                                booknow.setEnabled(false); // Disable booking button
+                                Toast.makeText(InfoActivity.this, "You have already booked this place.", Toast.LENGTH_SHORT).show();
+                                alreadyBooked = true;
+                                break;
+                            }
+                        }
+
+                        if (!alreadyBooked) {
+                            // Enable date selection and booking button if not booked
+                            editTextDate.setEnabled(true);
+                            booknow.setEnabled(true);
+                            editTextDate.setText(""); // Clear previous date
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(InfoActivity.this, "Error checking bookings: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
     private void openGoogleMaps() {
         // Destination coordinates (latitude and longitude)
         double destinationLatitude = 9.5566;

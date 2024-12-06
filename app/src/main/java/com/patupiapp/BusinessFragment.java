@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -238,6 +239,7 @@ public class BusinessFragment extends Fragment {
 
 
 
+
         imageView.setOnClickListener(v -> openImagePicker());
         if (getArguments() != null) {
             double latitude = getArguments().getDouble("latitude");
@@ -293,6 +295,8 @@ public class BusinessFragment extends Fragment {
 
                                         // Add the booking to the list to display in RecyclerView
                                         bookingList.add(booking);
+
+                                        break;
                                     }
                                 }
 
