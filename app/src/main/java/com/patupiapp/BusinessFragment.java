@@ -254,7 +254,10 @@ public class BusinessFragment extends Fragment {
         recyclerView2 = rootView.findViewById(R.id.recycler_view);
 
         bookingList = new ArrayList<>();
-        bookingAdapter = new BookingAdapter(bookingList);
+        bookingAdapter = new BookingAdapter(getContext(), bookingList, booking -> {
+            // Show delete confirmation dialog when an item is clicked
+            showDeleteDialog(booking);
+        });
         recyclerView2.setAdapter(bookingAdapter);
 //        recyclerView = rootView.findViewById(R.id.distanationList);
 
@@ -266,6 +269,7 @@ public class BusinessFragment extends Fragment {
 
                 // Get the place name from the bname EditText
                 String placeName = bname.getText().toString().trim();
+
 
                 // Iterate through the bookings and add them to the list if they match the place name
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -292,7 +296,7 @@ public class BusinessFragment extends Fragment {
 
                                         // Set the userName in the booking object (or create a new object for display)
                                         booking.setUserName(userName);
-
+                                        booking.setId(snapshot.getKey());
                                         // Add the booking to the list to display in RecyclerView
                                         bookingList.add(booking);
 
@@ -372,6 +376,34 @@ public class BusinessFragment extends Fragment {
 
         return rootView;
     }
+
+    private void showDeleteDialog(Booking booking) {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Complete Booking")
+                .setMessage("Are you sure you want to mark as completed this booking?")
+                .setPositiveButton("Confirm", (dialog, which) -> deleteBooking(booking))
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+    private void deleteBooking(Booking booking) {
+        if (booking.getId() != null) {
+            DatabaseReference bookingsRef = FirebaseDatabase.getInstance().getReference("Bookings");
+
+            bookingsRef.child(booking.getId())
+                    .removeValue()
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(getContext(), "Booking completed successfully", Toast.LENGTH_SHORT).show();
+                        bookingList.remove(booking);
+                        bookingAdapter.notifyDataSetChanged();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(getContext(), "Failed to mark as completed booking", Toast.LENGTH_SHORT).show();
+                    });
+        } else {
+            Toast.makeText(getContext(), "Error: Booking ID is null", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     private void navigateToMapFragment() {
         // Create a new instance of MapFragment

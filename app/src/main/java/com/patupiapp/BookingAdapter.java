@@ -1,9 +1,9 @@
 package com.patupiapp;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,14 +14,18 @@ import java.util.List;
 public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingViewHolder> {
 
     private List<Booking> bookingList;
+    private Context context;
+    private OnItemClickListener onItemClickListener;
 
+    // Interface for click events
+    public interface OnItemClickListener {
+        void onItemClick(Booking booking);
+    }
 
-
-    // Define an interface for the click listener
-
-
-    public BookingAdapter(List<Booking> bookingList) {
+    public BookingAdapter(Context context, List<Booking> bookingList, OnItemClickListener onItemClickListener) {
+        this.context = context;
         this.bookingList = bookingList;
+        this.onItemClickListener = onItemClickListener;
     }
 
     @NonNull
@@ -40,6 +44,13 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
         holder.placeName.setText(booking.getPlaceName());
         holder.date.setText(booking.getDate());
         holder.userEmail.setText(booking.getUserEmail());
+
+        // Set click listener for each item
+        holder.itemView.setOnClickListener(v -> {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(booking);
+            }
+        });
     }
 
     @Override
@@ -60,4 +71,3 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
         }
     }
 }
-

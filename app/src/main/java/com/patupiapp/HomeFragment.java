@@ -57,32 +57,32 @@ public class HomeFragment extends Fragment {
         adapter = new ReAdapterDestination(getContext(), list);
         recyclerView2.setAdapter(adapter2);
         bookingList = new ArrayList<>();
-        bookingAdapter = new BookingAdapter(bookingList);
+//        bookingAdapter = new BookingAdapter(bookingList);
         recyclerView.setAdapter(adapter);
 
         // Fetch bookings from Firebase
-        DatabaseReference bookingsRef = FirebaseDatabase.getInstance().getReference("Bookings");
-        bookingsRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                bookingList.clear(); // Clear previous data
-
-                // Iterate through the bookings and add them to the list
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Booking booking = snapshot.getValue(Booking.class);
-                    bookingList.add(booking);
-                }
-
-                bookingAdapter.notifyDataSetChanged(); // Notify the adapter about data changes
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Handle error
-                Toast.makeText(getContext(), "Error loading bookings", Toast.LENGTH_SHORT).show();
-
-            }
-        });
+//        DatabaseReference bookingsRef = FirebaseDatabase.getInstance().getReference("Bookings");
+//        bookingsRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                bookingList.clear(); // Clear previous data
+//
+//                // Iterate through the bookings and add them to the list
+//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+//                    Booking booking = snapshot.getValue(Booking.class);
+//                    bookingList.add(booking);
+//                }
+//
+//                bookingAdapter.notifyDataSetChanged(); // Notify the adapter about data changes
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                // Handle error
+//                Toast.makeText(getContext(), "Error loading bookings", Toast.LENGTH_SHORT).show();
+//
+//            }
+//        });
 
         adapter2.setOnItemClickListener(position -> {
             Destination clickedPlace = list2.get(position);

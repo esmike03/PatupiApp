@@ -1,6 +1,7 @@
 package com.patupiapp;
 
 public class Booking {
+    private String id;
     private String date;
     private String userEmail;
     private String placeName;
@@ -10,13 +11,21 @@ public class Booking {
         // Default constructor for Firebase
     }
 
-    public Booking(String date, String userEmail, String placeName, String userName) {
+    public Booking(String id, String date, String userEmail, String placeName, String userName) {
+        this.id = id;
         this.date = date;
         this.userEmail = userEmail;
         this.placeName = placeName;
         this.userName = userName;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
     public String getDate() {
         return date;
     }

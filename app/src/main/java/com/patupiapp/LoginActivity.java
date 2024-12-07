@@ -220,6 +220,8 @@ public class LoginActivity extends AppCompatActivity {
     private void checkBox() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         String check = sharedPreferences.getString("name", "");
+        String business = sharedPreferences.getString("business", "");
+
         if(check.equals("true")){
             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
             startActivity(intent);
@@ -230,7 +232,7 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
         if (isLoggedIn) {
-            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+            Intent intent = new Intent(LoginActivity.this, BusinessHomeActivity.class);
             startActivity(intent);
             finish();
         }
